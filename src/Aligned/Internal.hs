@@ -12,7 +12,7 @@
 -- Stability :  experimental
 -- Portability: non-portable
 --
--- Type-aligned sequences in the style of Atze van der Ploeg's 
+-- Type-aligned sequences in the style of Atze van der Ploeg's
 -- <http://okmij.org/ftp/Haskell/zseq.pdf Reflection without Remorse>
 
 module Aligned.Internal
@@ -67,7 +67,7 @@ class Snoc t where
 
 class Singleton t where
   singleton :: f a b -> t f a b
- 
+
 pattern Cons :: (Cons t, Uncons t) => f b c -> t f a b -> t f a c
 pattern Cons a as <- (uncons -> a :&: as) where
   Cons a as = cons a as
@@ -78,7 +78,7 @@ pattern Snoc as a <- (unsnoc -> as :&: a) where
 
 pattern Nil :: (Nil t, Uncons t) => (a~b) => t f a b
 pattern Nil <- (uncons -> Empty) where
-  Nil = nil 
+  Nil = nil
 
 --------------------------------------------------------------------------------
 -- * The opposite category
@@ -207,7 +207,7 @@ rotate _ _ _ = error "Q.rotate: invariant broken"
 --------------------------------------------------------------------------------
 
 data Cat f a b where
-  E :: Cat f a a 
+  E :: Cat f a a
   C :: f b c -> !(Q (Cat f) a b) -> Cat f a c
 
 {-# complete Nil, Cons :: Cat #-}
@@ -244,7 +244,7 @@ linkAll q = case uncons q of
     Empty -> c
     _ -> link a t (linkAll q')
   E :&: q' -> linkAll q' -- recursive case in case of empty queues, unused
-  Empty -> E 
+  Empty -> E
 
 instance Nil Cat where
   nil = E

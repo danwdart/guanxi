@@ -22,7 +22,7 @@ import Control.Monad (ap, MonadPlus(..))
 
 data T s a = Proof a | Goal s | Failed
   deriving (Functor,Foldable,Traversable)
- 
+
 instance Bifunctor T where bimap = bimapDefault
 instance Bifoldable T where bifoldMap = bifoldMapDefault
 instance Bitraversable T where
@@ -35,13 +35,13 @@ lower :: Applicative m => Tactic g m a -> g -> m (T g a)
 lower m = runTactic m (pure . Proof) (pure Failed) (pure . Goal)
 
 
--- | Based on 
+-- | Based on
 -- <https://people.eecs.berkeley.edu/~necula/autded/lecture15-tactics.pdf>
 newtype Tactic g m a = Tactic
   { runTactic :: forall r.
     (a -> m r) -> m r -> (g -> m r) -> g -> m r
   } deriving Functor
- 
+
 instance Applicative (Tactic g m) where
   pure a = Tactic $ \kp _ _ _ -> kp a
   (<*>) = ap
@@ -52,7 +52,7 @@ instance Monad (Tactic g m) where
 
 fby :: Tactic g m a -> Tactic g m a -> Tactic g m a
 fby m n = Tactic $ \kp kf kc ->
-  runTactic m kp kf (runTactic n kp kf kc) 
+  runTactic m kp kf (runTactic n kp kf kc)
 
 instance Alternative (Tactic g m) where
   m <|> n = Tactic $ \kp kf kc g ->

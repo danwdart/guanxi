@@ -7,7 +7,7 @@
 -- Stability :  experimental
 -- Portability: non-portable
 --
--- Type-aligned sequences in the style of Atze van der Ploeg's 
+-- Type-aligned sequences in the style of Atze van der Ploeg's
 -- <http://okmij.org/ftp/Haskell/zseq.pdf Reflection without Remorse>
 
 module Aligned.Base

@@ -19,7 +19,7 @@ import Control.Applicative
 import Control.Arrow (Kleisli(..))
 import Control.Monad (ap, liftM, guard, join)
 import Control.Category
-import Data.Functor 
+import Data.Functor
 import Prelude hiding ((.),id)
 import Ref
 import Unification.Class

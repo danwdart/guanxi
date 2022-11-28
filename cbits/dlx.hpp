@@ -63,7 +63,7 @@ struct dlx {
   template <typename Fn> void solve(Fn f);
 
 private:
-  
+
   template <typename Fn> option for_option_containing(link cell, Fn f) noexcept;
   template <typename Fn> void for_option_containing_exclusive(link cell, Fn f) noexcept;
 
@@ -79,7 +79,7 @@ private:
 // implementation details
 // --------------------------------------------------------------------------------
 
-template <typename Fn> 
+template <typename Fn>
 void dlx::for_option_containing_exclusive(link cell, Fn f) noexcept {
   auto parity = cells[cell].parity;
   auto i=cell-1;
@@ -93,7 +93,7 @@ void dlx::for_option_containing_exclusive(link cell, Fn f) noexcept {
 }
 
   // returns row# of the row containing the cell
-template <typename Fn> 
+template <typename Fn>
 option dlx::for_option_containing(link cell, Fn f) noexcept {
   auto parity = cells[cell].parity;
   auto i=cell;

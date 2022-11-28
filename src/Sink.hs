@@ -10,17 +10,17 @@ import Data.Void
 import Ref
 import Signal
 
-data Sink m a = Sink 
+data Sink m a = Sink
   { _cellIds    :: !(Signals m)
   , _cellUpdate :: a -> m () -- update
   }
 
 instance Contravariant (Sink m) where
   contramap f (Sink m g) = Sink m (g . f)
- 
+
 instance Applicative m => Divisible (Sink m) where
   conquer = Sink mempty $ \_ -> pure ()
-  divide f (Sink s g) (Sink t h) = Sink (s <> t) $ \a -> case f a of 
+  divide f (Sink s g) (Sink t h) = Sink (s <> t) $ \a -> case f a of
      (b, c) -> g b *> h c
 
 instance Applicative m => Decidable (Sink m) where

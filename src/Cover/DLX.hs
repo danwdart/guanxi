@@ -102,7 +102,7 @@ next d = withCover d $ \p -> allocaBytes (sizeOfPtr + sizeOfWord32) $ \q ->
 
 reset :: HasCover m s => s -> m ()
 reset d = withCover d c_reset
- 
+
 -- NB: this "consumes" the cover. You can't use it until solve is finished.
 each :: (HasCover m s, Alternative m) => s -> m [Int]
 each d = next d >>= \case

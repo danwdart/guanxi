@@ -55,7 +55,7 @@ type MonadRef m = (PrimMonad m, MonadPlus m)
 -- taking the failure continuation. Users of this function should endeavour to guarantee that the
 -- second argument does in fact undo the effects of the first.
 unwind
-  :: MonadRef m 
+  :: MonadRef m
   => (a -> (b, c))
   -> (c -> m d)
   -> m a

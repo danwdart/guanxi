@@ -35,7 +35,7 @@ addVec a (Vec i pa) = stToPrim do
     writePrimArray pa i a
     return (i, Vec (i+1) pa)
   else do
-    pa' <- resizeMutablePrimArray pa (n*2) 
+    pa' <- resizeMutablePrimArray pa (n*2)
     writePrimArray pa' i a
     return (i, Vec (i+1) pa')
 {-# inline addVec #-}
@@ -80,7 +80,7 @@ nonAtomicModifyVector (Vector ref) k = stToPrim do
 modifyVector :: PrimMonad m => Vector (PrimState m) a -> (Vec (PrimState m) a -> ST (PrimState m) (Vec (PrimState m) a)) -> m ()
 modifyVector (Vector ref) k = stToPrim $ (readMutVar ref >>= k) >>= writeMutVar ref
 {-# inline modifyVector #-}
-  
+
 addVector :: (PrimMonad m, Prim a) => a -> Vector (PrimState m) a -> m Int
 addVector a v = nonAtomicModifyVector v \vec -> addVec a vec
 {-# inline addVector #-}

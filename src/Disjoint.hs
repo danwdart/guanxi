@@ -1,7 +1,7 @@
 {-# language FlexibleInstances #-}
 {-# language FlexibleContexts #-}
 {-# language MultiParamTypeClasses #-}
-{-# language LambdaCase #-} 
+{-# language LambdaCase #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018

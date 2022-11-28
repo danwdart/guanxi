@@ -123,14 +123,14 @@ qFromToList = property $ do
 qToFromList = property $ do
   l <- forAll (Gen.list (Range.linear 0 10) genCat)
   toList (fromList l :: Q (Cat Int)) === l
-  
+
 
 (===@) :: (Eq a, Show a, IsList (f a), Item (f a) ~ a) => f a -> [a] -> PropertyT IO ()
 (===@) = (===) . toList
 infix 4 ===@
 
 (====) :: (Eq a, Show a, IsList (f a), Item (f a) ~ a) => f a -> f a -> PropertyT IO ()
-(====) = (===) `on` toList 
+(====) = (===) `on` toList
 infix 4 ====
 
 genIsList :: (IsList (f a), Item (f a) ~ a, Monoid (f a)) => Range Int -> Gen a -> Gen (f a)

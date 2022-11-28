@@ -21,7 +21,7 @@ queens n = runST $ do
     for_ [0..n-1] $ \(organ -> c) ->
       addOption x [rows+r,cols+c,diag1+r+c,diag2+n-1-r+c]
   count x
- 
+
 main :: IO ()
 main = do
   let n = queens 12

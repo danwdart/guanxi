@@ -123,7 +123,7 @@ newSignal_ = Signal <$> newUnique <*> newRef mempty
 
 infiniteMultiplicity :: MonadSignal e m => m ()
 infiniteMultiplicity = do
-  mult <- view signalMultiplicity 
+  mult <- view signalMultiplicity
   writeRef mult 0 -- abuse 0 * anything = 0 = anything * 0 to use 0 as infinity
 
 multiplicity :: MonadSignal e m => Integer -> m ()

@@ -153,7 +153,7 @@ counts (Store f s) = runST $ do
   cs <- newPrimArray n
   for_ [0..n-1] $ \ i -> if
     | i <= 1 -> writePrimArray cs i i
-    | Node _ l h <- indexPrimArray f i -> do 
+    | Node _ l h <- indexPrimArray f i -> do
       x <- readPrimArray cs l
       y <- readPrimArray cs h
       writePrimArray cs i (x + y)
@@ -161,4 +161,4 @@ counts (Store f s) = runST $ do
   return $ Store arr s
 
 count :: HasCover m s => s -> m Int
-count = fmap (extract . counts) . solve 
+count = fmap (extract . counts) . solve

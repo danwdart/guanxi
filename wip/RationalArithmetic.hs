@@ -194,11 +194,11 @@ instance Monad m => Alternative (M m) where
   l <|> r = M $ \ rand k h -> case h of
     Done -> pure Done
     Branch a Done -> (`Branch` Done) <$> runM l rand k a
-    Branch Done b -> (Branch Done) <$> runM r rand k b
+    Branch Done b -> Branch Done <$> runM r rand k b
     Branch a b -> do
       c <- rand
       if c then (`Branch` b) <$> runM l rand k a
-      else (Branch a) <$> runM r rand k b
+      else Branch a <$> runM r rand k b
 
 instance Monad m => MonadPlus (M m) where
   mplus = (<|>)

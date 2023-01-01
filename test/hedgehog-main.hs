@@ -40,11 +40,11 @@ tests = Group "tests"
 catLeftId, catRightId, catAssoc, catCons, catSnoc, catSingleton, catUncons, catLink, catLinkAll :: Property
 catLeftId = property $ do
   c <- forAll genCat
-  (c) === c
+  c === c
 
 catRightId = property $ do
   c <- forAll genCat
-  (c) === c
+  c === c
 
 catAssoc = property $ do
   a <- forAll genCat

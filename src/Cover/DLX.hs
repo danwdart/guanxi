@@ -4,7 +4,7 @@
 {-# LANGUAGE FlexibleInstances        #-}
 {-# LANGUAGE FunctionalDependencies   #-}
 {-# LANGUAGE LambdaCase               #-}
-{-# LANGUAGE MultiWayIf               #-}
+
 {-# LANGUAGE ScopedTypeVariables      #-}
 {-# LANGUAGE ViewPatterns             #-}
 

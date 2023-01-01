@@ -52,7 +52,7 @@ spec = do
       it "unviews the result of <>" $ do
         let
           x :: Identity (View Int (LogicT Identity Int))
-          x = pure (1 :&: (LogicT (singleton (pure (2 :&: empty)))))
+          x = pure (1 :&: LogicT (singleton (pure (2 :&: empty))))
           result = unview x
         observeAll result `shouldBe` [1,2]
     describe "Logic <|>" $ do

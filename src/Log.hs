@@ -1,13 +1,13 @@
-{-# language CPP #-}
-{-# language FlexibleContexts #-}
-{-# language FlexibleInstances #-}
-{-# language BangPatterns #-}
-{-# language MultiWayIf #-}
-{-# language RankNTypes #-}
-{-# language GADTs #-}
-{-# language DeriveTraversable #-}
-{-# language ScopedTypeVariables #-}
-{-# language MultiParamTypeClasses #-}
+{-# LANGUAGE BangPatterns          #-}
+{-# LANGUAGE CPP                   #-}
+{-# LANGUAGE DeriveTraversable     #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE GADTs                 #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE MultiWayIf            #-}
+{-# LANGUAGE RankNTypes            #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -25,18 +25,18 @@ module Log
   , Cursor, newCursor, oldCursor, deleteCursor, advance
   ) where
 
-import Control.Monad.Primitive
-import Control.Monad (join)
-import Control.Lens
-import Data.FingerTree as F
-import Data.Foldable as Foldable
-import Prelude hiding (log)
-import Ref
+import           Control.Lens
+import           Control.Monad           (join)
+import           Control.Monad.Primitive
+import           Data.FingerTree         as F
+import           Data.Foldable           as Foldable
+import           Prelude                 hiding (log)
+import           Ref
 
 -- version # since, ref count, monoidal summary
 data LogEntry a = LogEntry
   { since, refCount :: {-# unpack #-} !Int
-  , contents :: a
+  , contents        :: a
   } deriving (Show, Functor, Foldable, Traversable)
 
 instance Semigroup a => Measured (LogEntry (Maybe a)) (LogEntry a) where
@@ -127,16 +127,14 @@ oldCursor l@(Log r) = Cursor l <$> do
 deleteCursor :: MonadRef m => CursorM m a -> m ()
 deleteCursor (Cursor (Log rlr) ri) = do
   i <- readRef ri
-  modifyRef rlr $ \ls@(LogState t v c m) -> if
-    | i >= v -> LogState t v (c-1) m
-    | otherwise -> case F.split (\(LogEntry j _ _) -> j >= i) t of
-      (l,r) -> case viewr l of
-        EmptyR -> ls
-        l' F.:> LogEntry j c' a -> LogState (nl >< r) v c m where
-          nl | c' > 1 = l' F.|> LogEntry j (c'-1) a
-             | otherwise = case viewr l' of
-               EmptyR -> mempty
-               l'' F.:> LogEntry k c'' b -> l'' F.|> LogEntry k c'' (b <> a)
+  modifyRef rlr $ \ls@(LogState t v c m) -> (if i >= v then LogState t v (c-1) m else (case F.split (\(LogEntry j _ _) -> j >= i) t of
+                                                                          (l,r) -> case viewr l of
+                                                                            EmptyR -> ls
+                                                                            l' F.:> LogEntry j c' a -> LogState (nl >< r) v c m where
+                                                                              nl | c' > 1 = l' F.|> LogEntry j (c'-1) a
+                                                                                 | otherwise = case viewr l' of
+                                                                                   EmptyR -> mempty
+                                                                                   l'' F.:> LogEntry k c'' b -> l'' F.|> LogEntry k c'' (b <> a)))
 
 -- (0{2} m) (2{3} m) (3{4}) m {1} Nothing
 
@@ -145,20 +143,18 @@ deleteCursor (Cursor (Log rlr) ri) = do
 advance :: forall m a. MonadRef m => CursorM m a -> m (Maybe a)
 advance (Cursor (Log rlr) ri) = do
   i <- readRef ri
-  join $ updateRef rlr $ \ls@(LogState t v c (m :: Maybe a)) -> if
-    | i >= v -> case m of
-      Nothing -> (pure Nothing, ls)
-      Just a
-        | c == 1 -> case viewr t of
-          t' F.:> LogEntry ov oc b -> (pure m, LogState (t' F.|> LogEntry ov oc (b <> a)) v 1 Nothing)
-          EmptyR -> (pure m, LogState t v c Nothing) -- we're the only one listening
-        | !v' <- v + 1 -> (m <$ writeRef ri v', LogState (t F.|> LogEntry v (c-1) a) v' 1 Nothing)
-    | otherwise -> case F.split (\(LogEntry j _ _) -> j >= i) t of
-      (l,r) -> case viewr l of
-        EmptyR -> error "advance: missing cursor!"
-        l' F.:> LogEntry j c' a
-          | (ls', k) <- watchNew (LogState (nl >< r) v c m) -> ((Just a <> contents (measure r) <> m) <$ writeRef ri ls', k) where
-          nl | c' > 1 = l' F.|> LogEntry j (c'-1) a
-             | otherwise = case viewr l' of
-               l'' F.:> LogEntry k c'' b -> l'' F.|> LogEntry k c'' (b <> a)
-               EmptyR -> mempty
+  join $ updateRef rlr $ \ls@(LogState t v c (m :: Maybe a)) -> (if i >= v then (case m of
+                                                                       Nothing -> (pure Nothing, ls)
+                                                                       Just a
+                                                                         | c == 1 -> case viewr t of
+                                                                           t' F.:> LogEntry ov oc b -> (pure m, LogState (t' F.|> LogEntry ov oc (b <> a)) v 1 Nothing)
+                                                                           EmptyR -> (pure m, LogState t v c Nothing) -- we're the only one listening
+                                                                         | !v' <- v + 1 -> (m <$ writeRef ri v', LogState (t F.|> LogEntry v (c-1) a) v' 1 Nothing)) else (case F.split (\(LogEntry j _ _) -> j >= i) t of
+                                                                                                                                                              (l,r) -> case viewr l of
+                                                                                                                                                                EmptyR -> error "advance: missing cursor!"
+                                                                                                                                                                l' F.:> LogEntry j c' a
+                                                                                                                                                                  | (ls', k) <- watchNew (LogState (nl >< r) v c m) -> ((Just a <> contents (measure r) <> m) <$ writeRef ri ls', k) where
+                                                                                                                                                                  nl | c' > 1 = l' F.|> LogEntry j (c'-1) a
+                                                                                                                                                                     | otherwise = case viewr l' of
+                                                                                                                                                                       l'' F.:> LogEntry k c'' b -> l'' F.|> LogEntry k c'' (b <> a)
+                                                                                                                                                                       EmptyR -> mempty))

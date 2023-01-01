@@ -1,14 +1,14 @@
-{-# language ForeignFunctionInterface #-}
-{-# language KindSignatures #-}
-{-# language MultiParamTypeClasses #-}
-{-# language FunctionalDependencies #-}
-{-# language MultiWayIf #-}
-{-# language ScopedTypeVariables #-}
-{-# language ViewPatterns #-}
-{-# language FlexibleInstances #-}
-{-# language MagicHash #-}
-{-# language UnboxedTuples #-}
-{-# language PatternSynonyms #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE KindSignatures           #-}
+
+{-# LANGUAGE FlexibleInstances        #-}
+{-# LANGUAGE FunctionalDependencies   #-}
+{-# LANGUAGE MagicHash                #-}
+{-# LANGUAGE MultiWayIf               #-}
+{-# LANGUAGE ScopedTypeVariables      #-}
+{-# LANGUAGE UnboxedTuples            #-}
+{-# LANGUAGE ViewPatterns             #-}
+
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018-2019
@@ -32,20 +32,20 @@ module Cover.DXZ
   , Store(..), extract
   ) where
 
-import Control.Lens (ifor_)
-import Control.Monad.Primitive
-import Control.Monad.ST
-import Data.Bits
-import Data.Foldable
-import Data.Kind
-import Data.Primitive.PrimArray
-import Data.Primitive.Ptr
-import Data.Primitive.Types
-import Data.Word
-import Foreign.ForeignPtr
-import Foreign.Marshal.Alloc
-import Foreign.Ptr
-import Foreign.Storable as Storable
+import           Control.Lens             (ifor_)
+import           Control.Monad.Primitive
+import           Control.Monad.ST
+import           Data.Bits
+import           Data.Foldable
+import           Data.Kind
+import           Data.Primitive.PrimArray
+import           Data.Primitive.Ptr
+import           Data.Primitive.Types
+import           Data.Word
+import           Foreign.ForeignPtr
+import           Foreign.Marshal.Alloc
+import           Foreign.Ptr
+import           Foreign.Storable         as Storable
 
 data Store a = Store (PrimArray a) Int
 

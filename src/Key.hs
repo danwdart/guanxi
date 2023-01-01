@@ -1,11 +1,11 @@
-{-# language TypeOperators #-}
-{-# language TypeFamilies #-}
-{-# language FlexibleContexts #-}
-{-# language UndecidableInstances #-}
-{-# language ScopedTypeVariables #-}
-{-# language RankNTypes #-}
-{-# language GADTs #-}
-{-# language RoleAnnotations #-}
+
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE GADTs                #-}
+{-# LANGUAGE RankNTypes           #-}
+{-# LANGUAGE RoleAnnotations      #-}
+{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -23,12 +23,12 @@ module Key
   , Box(Lock), unlock
   ) where
 
-import Control.Monad.Primitive
-import Data.Primitive.MutVar
-import Data.Proxy
-import Data.Type.Coercion
-import Data.Type.Equality
-import Unsafe.Coerce
+import           Control.Monad.Primitive
+import           Data.Primitive.MutVar
+import           Data.Proxy
+import           Data.Type.Coercion
+import           Data.Type.Equality
+import           Unsafe.Coerce
 
 -- move to Equality.Key?
 newtype Key m a = Key (MutVar (PrimState m) (Proxy a))
@@ -58,5 +58,5 @@ data Box m where
 unlock :: Key m a -> Box m -> Maybe a
 unlock k (Lock l x) = case testEquality k l of
   Just Refl -> Just x
-  Nothing -> Nothing
+  Nothing   -> Nothing
 {-# inline unlock #-}

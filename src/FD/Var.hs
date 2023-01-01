@@ -1,10 +1,10 @@
-{-# language TupleSections #-}
-{-# language ViewPatterns #-}
-{-# language FlexibleContexts #-}
-{-# language FlexibleInstances #-}
-{-# language MultiParamTypeClasses #-}
-{-# language TypeFamilies #-}
-{-# language UndecidableInstances #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TupleSections         #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE ViewPatterns          #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -15,14 +15,14 @@
 
 module FD.Var where
 
-import Control.Applicative as A
-import Control.Lens
-import Control.Monad (join, when, guard)
-import Control.Monad.Primitive
-import Data.Set as Set
-import Data.Type.Coercion
-import Ref
-import Signal
+import           Control.Applicative     as A
+import           Control.Lens
+import           Control.Monad           (guard, join, when)
+import           Control.Monad.Primitive
+import           Data.Set                as Set
+import           Data.Type.Coercion
+import           Ref
+import           Signal
 
 -- finite domains represented as intersection sets with
 -- propagators to establish generalized arc consistency,
@@ -35,7 +35,7 @@ instance Eq (FDVar m a) where
 instance TestCoercion (FDVar m) where
   testCoercion (FDVar r i) (FDVar s j) = case testCoercion r s of
      Just Coercion | i == j -> Just Coercion
-     _ -> Nothing
+     _                      -> Nothing
 
 instance HasSignals m (FDVar m a) where
   signals (FDVar _ v) = signals v
@@ -73,8 +73,8 @@ lt :: (MonadSignal e m, Ord a) => FDVar m a -> FDVar m a -> m ()
 lt l r = do
   guard (l /= r)
   propagate l r $ readRef l >>= \ xs -> case Set.minView xs of
-    Nothing -> A.empty
+    Nothing        -> A.empty
     Just (min_x,_) -> shrink r $ \ ys -> Set.splitMember min_x ys ^. _3
   propagate r l $ readRef r >>= \ ys -> case Set.maxView ys of
-    Nothing -> A.empty
+    Nothing        -> A.empty
     Just (max_y,_) -> shrink l $ \ xs -> Set.splitMember max_y xs ^. _1

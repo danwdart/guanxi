@@ -1,14 +1,14 @@
-{-# language ViewPatterns #-}
-{-# language ConstraintKinds #-}
-{-# language MultiParamTypeClasses #-}
-{-# language FunctionalDependencies #-}
-{-# language FlexibleInstances #-}
-{-# language FlexibleContexts #-}
-{-# language LambdaCase #-}
-{-# language ScopedTypeVariables #-}
-{-# language Trustworthy #-}
-{-# language TupleSections #-}
-{-# language TypeFamilies #-}
+{-# LANGUAGE ConstraintKinds        #-}
+{-# LANGUAGE ViewPatterns           #-}
+
+{-# LANGUAGE FlexibleContexts       #-}
+{-# LANGUAGE FlexibleInstances      #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE LambdaCase             #-}
+{-# LANGUAGE ScopedTypeVariables    #-}
+{-# LANGUAGE Trustworthy            #-}
+{-# LANGUAGE TupleSections          #-}
+{-# LANGUAGE TypeFamilies           #-}
 
 module Ref
   ( memo
@@ -20,12 +20,12 @@ module Ref
   , modifyRef, modifyRef'
   ) where
 
-import Control.Applicative
-import Control.Monad
-import Control.Monad.Primitive
-import Data.Primitive.MutVar
-import Data.Type.Coercion
-import Unsafe.Coerce
+import           Control.Applicative
+import           Control.Monad
+import           Control.Monad.Primitive
+import           Data.Primitive.MutVar
+import           Data.Type.Coercion
+import           Unsafe.Coerce
 
 -- | Explicitly share a computation. This allows us to branch /now/ but perform
 -- the computation /later/, only as we need the value.

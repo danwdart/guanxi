@@ -1,14 +1,14 @@
-{-# language FlexibleInstances #-}
-{-# language MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Sink where
 
-import Control.Monad.Reader.Class
-import Data.Functor.Contravariant
-import Data.Functor.Contravariant.Divisible
-import Data.Void
-import Ref
-import Signal
+import           Control.Monad.Reader.Class
+import           Data.Functor.Contravariant
+import           Data.Functor.Contravariant.Divisible
+import           Data.Void
+import           Ref
+import           Signal
 
 data Sink m a = Sink
   { _cellIds    :: !(Signals m)
@@ -26,7 +26,7 @@ instance Applicative m => Divisible (Sink m) where
 instance Applicative m => Decidable (Sink m) where
   lose f = Sink mempty (absurd . f)
   choose f (Sink s g) (Sink t h) = Sink (s <> t) $ \a -> case f a of
-     Left b -> g b
+     Left b  -> g b
      Right c -> h c
 
 instance HasSignals m (Sink m a) where

@@ -1,4 +1,4 @@
-{-# language PatternSynonyms #-}
+{-# LANGUAGE PatternSynonyms #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -29,4 +29,4 @@ module Aligned.Base
   , pattern Nil
   ) where
 
-import Aligned.Internal
+import           Aligned.Internal

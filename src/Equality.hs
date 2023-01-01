@@ -1,7 +1,7 @@
-{-# language FlexibleInstances #-}
-{-# language FlexibleContexts #-}
-{-# language MultiParamTypeClasses #-}
-{-# language LambdaCase #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -22,16 +22,16 @@ module Equality
   , decide
   ) where
 
-import Control.Applicative
-import Control.Monad
-import Control.Monad.Primitive
-import Control.Lens hiding (isn't)
-import Data.Foldable (for_)
-import Data.Function (on)
-import Data.Hashable
-import Data.HashSet as HS
-import Ref
-import Unique
+import           Control.Applicative
+import           Control.Lens            hiding (isn't)
+import           Control.Monad
+import           Control.Monad.Primitive
+import           Data.Foldable           (for_)
+import           Data.Function           (on)
+import           Data.Hashable
+import           Data.HashSet            as HS
+import           Ref
+import           Unique
 
 data Content s
   = Root
@@ -40,7 +40,7 @@ data Content s
   | Child !(Term s)     -- parent
 
 data Term s = Term
-  { equalityId       :: {-# unpack #-} !(Unique s)
+  { equalityId        :: {-# unpack #-} !(Unique s)
   , equalityReference :: {-# unpack #-} !(Ref s (Content s))
   }
 

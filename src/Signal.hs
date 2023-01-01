@@ -1,25 +1,24 @@
-{-# language AllowAmbiguousTypes #-}
-{-# language DefaultSignatures #-}
-{-# language FlexibleContexts #-}
-{-# language FlexibleInstances #-}
-{-# language ViewPatterns #-}
-{-# language UndecidableInstances #-}
-{-# language FunctionalDependencies #-}
-{-# language RankNTypes #-}
-{-# language TupleSections #-}
-{-# language GADTs #-}
-{-# language BangPatterns #-}
-{-# language MultiWayIf #-}
-{-# language LambdaCase #-}
-{-# language MultiParamTypeClasses #-}
-{-# language ScopedTypeVariables #-}
-{-# language TemplateHaskell #-}
-{-# language TypeApplications #-}
-{-# language TypeFamilies #-}
-{-# language TypeOperators #-}
-{-# language GeneralizedNewtypeDeriving #-}
-{-# language RoleAnnotations #-}
-{-# language ConstraintKinds #-}
+{-# LANGUAGE AllowAmbiguousTypes        #-}
+{-# LANGUAGE DefaultSignatures          #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE FunctionalDependencies     #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE LambdaCase                 #-}
+{-# LANGUAGE MultiWayIf                 #-}
+{-# LANGUAGE RankNTypes                 #-}
+{-# LANGUAGE TupleSections              #-}
+{-# LANGUAGE UndecidableInstances       #-}
+{-# LANGUAGE ViewPatterns               #-}
+
+{-# LANGUAGE ConstraintKinds            #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE RoleAnnotations            #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeApplications           #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE TypeOperators              #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018-2019
@@ -48,26 +47,26 @@ module Signal
   , newSignalEnv
   ) where
 
-import Control.Monad (unless, guard)
-import Control.Monad.Primitive
-import Control.Monad.Reader.Class
-import Control.Lens
-import Data.Foldable as Foldable
-import Data.Function (on)
-import Data.Hashable
-import Data.HashSet as HashSet -- HashSet?
-import Data.Kind
-import Data.Proxy
-import Ref
-import Unique
+import           Control.Lens
+import           Control.Monad              (guard, unless)
+import           Control.Monad.Primitive
+import           Control.Monad.Reader.Class
+import           Data.Foldable              as Foldable
+import           Data.Function              (on)
+import           Data.Hashable
+import           Data.HashSet               as HashSet
+import           Data.Kind
+import           Data.Proxy
+import           Ref
+import           Unique
 
 type Signals m = HashSet (Signal m)
 type Propagators m = HashSet (Propagator m)
 
 data Propagator m = Propagator
-  { propagatorAction :: m () -- TODO: return if we should self-delete, e.g. if all inputs are covered by contradiction
+  { propagatorAction           :: m () -- TODO: return if we should self-delete, e.g. if all inputs are covered by contradiction
   , _propSources, _propTargets :: !(Signals m) -- TODO: added for future topological analysis
-  , propagatorId :: {-# unpack #-} !(UniqueM m)
+  , propagatorId               :: {-# unpack #-} !(UniqueM m)
   }
 
 instance Eq (Propagator m) where
@@ -87,7 +86,7 @@ instance (m ~ n) => HasSignals m (Signals n) where
   signals = id
 
 data Signal (m :: Type -> Type) = Signal
-  { signalId :: UniqueM m
+  { signalId        :: UniqueM m
   , signalReference :: RefM m (Propagators m)
   }
 
@@ -181,5 +180,4 @@ propagate (signals -> cs) (signals -> ds) act = do
 ground :: MonadSignal e m => m ()
 ground = do
   g <- view signalEnvGround
-  m <- readRef g
-  m
+  join readRef g

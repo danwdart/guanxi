@@ -1,10 +1,10 @@
-{-# language DefaultSignatures #-}
-{-# language TypeOperators #-}
-{-# language EmptyCase #-}
-{-# language FlexibleInstances #-}
-{-# language FlexibleContexts #-}
-{-# language BangPatterns #-}
-{-# language RankNTypes #-}
+{-# LANGUAGE BangPatterns      #-}
+{-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE EmptyCase         #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE RankNTypes        #-}
+{-# LANGUAGE TypeOperators     #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -19,13 +19,13 @@ module Unification.Class
   ) where
 
 -- import Aligned.Freer
-import Control.Applicative
-import GHC.Generics
-import Data.Functor.Sum
-import Data.Functor.Identity
-import Data.Functor.Product
-import Data.Functor.Compose
-import Data.Proxy
+import           Control.Applicative
+import           Data.Functor.Compose
+import           Data.Functor.Identity
+import           Data.Functor.Product
+import           Data.Functor.Sum
+import           Data.Proxy
+import           GHC.Generics
 
 class Traversable f => Unified f where
   merge :: Alternative t => (a -> b -> t c) -> f a -> f b -> t (f c)
@@ -68,7 +68,7 @@ instance (GUnified f, GUnified g) => GUnified (f :*: g) where
 instance (GUnified f, GUnified g) => GUnified (f :+: g) where
   gmerge f (L1 l) (L1 r) = L1 <$> gmerge f l r
   gmerge f (R1 l) (R1 r) = R1 <$> gmerge f l r
-  gmerge _ _ _ = empty
+  gmerge _ _ _           = empty
 
 instance (Unified f, GUnified g) => GUnified (f :.: g) where
   gmerge f (Comp1 l) (Comp1 r) = Comp1 <$> merge (gmerge f) l r

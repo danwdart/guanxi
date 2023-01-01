@@ -1,13 +1,13 @@
-{-# language ViewPatterns #-}
-{-# language TupleSections #-}
+{-# LANGUAGE ViewPatterns #-}
+
 
 module Main where
 
-import Control.Monad (unless)
-import Control.Monad.ST
-import Cover.DXZ
-import Data.Foldable
-import System.Exit
+import           Control.Monad    (unless)
+import           Control.Monad.ST
+import           Cover.DXZ
+import           Data.Foldable
+import           System.Exit
 
 queens :: Int -> Int
 queens n = runST $ do

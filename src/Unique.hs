@@ -1,5 +1,5 @@
-{-# language MagicHash #-}
-{-# language UnboxedTuples #-}
+{-# LANGUAGE MagicHash     #-}
+{-# LANGUAGE UnboxedTuples #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,10 +14,10 @@ module Unique
   , newUnique
   ) where
 
-import Control.Monad.Primitive
-import Data.Hashable
-import GHC.Prim
-import GHC.Types
+import           Control.Monad.Primitive
+import           Data.Hashable
+import           GHC.Prim
+import           GHC.Types
 
 data Unique s = Unique !Int (MutableByteArray# s)
 type UniqueM m = Unique (PrimState m)

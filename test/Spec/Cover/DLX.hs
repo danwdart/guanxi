@@ -1,8 +1,8 @@
 module Spec.Cover.DLX where
 
-import Cover.DLX
-import Data.IORef
-import Test.Hspec
+import           Cover.DLX
+import           Data.IORef
+import           Test.Hspec
 
 spec :: Spec
 spec =

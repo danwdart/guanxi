@@ -20,4 +20,4 @@ module Domain.Interval
   , known
   ) where
 
-import Domain.Internal
+import           Domain.Internal

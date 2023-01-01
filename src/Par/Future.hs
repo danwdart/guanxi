@@ -11,9 +11,9 @@ module Par.Future
   , await
   ) where
 
-import Par.Class
-import Par.Promise
-import Signal
+import           Par.Class
+import           Par.Promise
+import           Signal
 
 newtype Future m a = Future (Promise m a)
 

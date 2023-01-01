@@ -1,6 +1,6 @@
-{-# language LambdaCase #-}
-{-# language FlexibleContexts #-}
-{-# language ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Par.Promise
   ( Promise
@@ -11,18 +11,18 @@ module Par.Promise
   , unsafeFulfill
   ) where
 
-import Control.Monad (guard, join)
-import Control.Monad.Cont.Class
-import Control.Monad.Primitive
-import Data.Foldable (traverse_)
-import Data.Maybe
-import Data.Proxy
-import Par.Class
-import Ref
-import Signal
+import           Control.Monad            (guard, join)
+import           Control.Monad.Cont.Class
+import           Control.Monad.Primitive
+import           Data.Foldable            (traverse_)
+import           Data.Maybe
+import           Data.Proxy
+import           Par.Class
+import           Ref
+import           Signal
 
 data Promise m a = Promise
-  { _promiseVal :: RefM m (Maybe a)
+  { _promiseVal    :: RefM m (Maybe a)
   , _promiseSignal :: Signal m
   }
 
@@ -41,8 +41,8 @@ newPromise = do
 -- | Fulfill a promise
 fulfill :: (MonadSignal e m, Eq a) => Promise m a -> a -> m ()
 fulfill (Promise r v) a = join $ updateRef r $ \case
-  Nothing      -> (fire v, Just a)
-  jb@(Just b)  -> (guard $ a == b, jb)
+  Nothing     -> (fire v, Just a)
+  jb@(Just b) -> (guard $ a == b, jb)
 
 -- fulfill a promise, assumes that any attempts at multiple fulfillment used the same value
 unsafeFulfill :: MonadSignal e m => Promise m a -> a -> m ()

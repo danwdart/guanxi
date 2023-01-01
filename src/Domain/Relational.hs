@@ -1,15 +1,15 @@
-{-# language TypeFamilies #-}
-{-# language LambdaCase #-}
-{-# language BangPatterns #-}
-{-# language FlexibleInstances #-}
-{-# language MultiParamTypeClasses #-}
+{-# LANGUAGE BangPatterns          #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies          #-}
 
 module Domain.Relational where
 
-import Control.Lens
-import Control.Monad
-import Control.Monad.Primitive
-import Ref
+import           Control.Lens
+import           Control.Monad
+import           Control.Monad.Primitive
+import           Ref
 
 -- Use path compression, union by size, with a big relational blob at the center
 data Content s a

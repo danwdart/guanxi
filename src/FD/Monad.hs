@@ -1,13 +1,13 @@
-{-# language GeneralizedNewtypeDeriving #-}
-{-# language RankNTypes #-}
-{-# language UndecidableInstances #-}
-{-# language PolyKinds #-}
-{-# language DataKinds #-}
-{-# language OverloadedLists #-}
-{-# language MultiParamTypeClasses #-}
-{-# language FlexibleInstances #-}
-{-# language TypeFamilies #-}
-{-# language UnboxedTuples #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedLists            #-}
+{-# LANGUAGE PolyKinds                  #-}
+{-# LANGUAGE RankNTypes                 #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE UnboxedTuples              #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -18,16 +18,16 @@
 
 module FD.Monad where
 
-import Control.Applicative
-import Control.Monad.Primitive
-import Control.Monad.Reader
-import Control.Monad.State.Strict
-import Control.Monad.ST
-import Data.Default
-import Logic.Class
-import Logic.Cont as Cont
-import Par.Cont as Cont
-import Signal
+import           Control.Applicative
+import           Control.Monad.Primitive
+import           Control.Monad.Reader
+import           Control.Monad.ST
+import           Control.Monad.State.Strict
+import           Data.Default
+import           Logic.Class
+import           Logic.Cont                 as Cont
+import           Par.Cont                   as Cont
+import           Signal
 
 type FD' s = ReaderT (SignalEnv (FD s)) (Cont.LogicT (ST s))
 

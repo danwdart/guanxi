@@ -1,4 +1,4 @@
-{-# language PatternSynonyms #-}
+{-# LANGUAGE PatternSynonyms #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -26,4 +26,4 @@ module Unaligned.Base
   , pattern Snoc
   ) where
 
-import Unaligned.Internal
+import           Unaligned.Internal

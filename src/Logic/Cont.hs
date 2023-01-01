@@ -1,11 +1,11 @@
-{-# LANGUAGE CPP #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE CPP                   #-}
+{-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE PatternSynonyms       #-}
+{-# LANGUAGE RankNTypes            #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE ViewPatterns          #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -16,17 +16,17 @@
 
 module Logic.Cont where
 
-import Control.Applicative
-import Control.Monad
-import Control.Monad.Error.Class
-import Control.Monad.Fail as Fail
-import Control.Monad.Primitive
-import Control.Monad.Reader
-import Control.Monad.State.Class
-import Data.Foldable (fold)
-import Data.Functor.Identity
-import Logic.Class
-import Unaligned.Base
+import           Control.Applicative
+import           Control.Monad
+import           Control.Monad.Error.Class
+import           Control.Monad.Fail        as Fail
+import           Control.Monad.Primitive
+import           Control.Monad.Reader
+import           Control.Monad.State.Class
+import           Data.Foldable             (fold)
+import           Data.Functor.Identity
+import           Logic.Class
+import           Unaligned.Base
 
 newtype LogicT m a = LogicT
   { runLogicT :: forall r. (a -> m r -> m r) -> m r -> m r
@@ -123,6 +123,6 @@ observeManyT n m
   | n <= 0 = return []
   | n == 1 = runLogicT m (\a _ -> return [a]) (return [])
   | otherwise = runLogicT (msplit m) sk (return []) where
-    sk Empty _ = return []
-    sk (a :&: m') _ = (a :) `liftM` observeManyT (n - 1) m'
+    sk Empty _      = return []
+    sk (a :&: m') _ = (a :) `fmap` observeManyT (n - 1) m'
 

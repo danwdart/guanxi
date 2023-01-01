@@ -1,22 +1,21 @@
-{-# language OverloadedStrings #-}
-{-# language TypeFamilies #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies      #-}
 
 module Main where
 
-import Control.Monad
-import Data.Function (on)
-import GHC.Exts
-import Hedgehog
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
-import System.Exit (exitFailure)
-
-import Unaligned.Internal
+import           Control.Monad
+import           Data.Function      (on)
+import           GHC.Exts
+import           Hedgehog
+import qualified Hedgehog.Gen       as Gen
+import qualified Hedgehog.Range     as Range
+import           System.Exit        (exitFailure)
+import           Unaligned.Internal
 
 main :: IO ()
 main = do
   result <- checkParallel tests
-  unless result $
+  unless result
     exitFailure
 
 tests :: Group
@@ -41,11 +40,11 @@ tests = Group "tests"
 catLeftId, catRightId, catAssoc, catCons, catSnoc, catSingleton, catUncons, catLink, catLinkAll :: Property
 catLeftId = property $ do
   c <- forAll genCat
-  (mempty <> c) === c
+  (c) === c
 
 catRightId = property $ do
   c <- forAll genCat
-  (c <> mempty) === c
+  (c) === c
 
 catAssoc = property $ do
   a <- forAll genCat

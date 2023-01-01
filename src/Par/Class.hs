@@ -1,5 +1,5 @@
-{-# language DefaultSignatures #-}
-{-# language TypeFamilies #-}
+{-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE TypeFamilies      #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -12,9 +12,9 @@ module Par.Class
   ( MonadPar(..)
   ) where
 
-import Control.Monad.Cont.Class
-import Control.Monad.Trans.Class
-import Control.Monad.Trans.Reader
+import           Control.Monad.Cont.Class
+import           Control.Monad.Trans.Class
+import           Control.Monad.Trans.Reader
 
 class MonadCont m => MonadPar m where
   fork :: m () -> m ()

@@ -1,5 +1,5 @@
-{-# language LambdaCase #-}
-{-# language TypeFamilies #-}
+{-# LANGUAGE LambdaCase   #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -10,15 +10,15 @@
 
 module Logic.Naive where
 
-import Control.Applicative
-import Control.Monad
-import Control.Monad.Primitive
-import Control.Monad.Trans
-import Data.Bifunctor
-import Data.Bifoldable
-import Data.Bitraversable
-import Logic.Class
-import Unaligned.Base
+import           Control.Applicative
+import           Control.Monad
+import           Control.Monad.Primitive
+import           Control.Monad.Trans
+import           Data.Bifoldable
+import           Data.Bifunctor
+import           Data.Bitraversable
+import           Logic.Class
+import           Unaligned.Base
 
 type L m a = View a (LogicT m a)
 
@@ -42,13 +42,13 @@ instance Monad m => Applicative (LogicT m) where
 
 instance Monad m => Monad (LogicT m) where
   LogicT m >>= f = LogicT $ m >>= \case
-    Empty -> return Empty
+    Empty   -> return Empty
     h :&: t -> runLogicT $ f h <|> (t >>= f)
 
 instance Monad m => Alternative (LogicT m) where
   empty = LogicT $ return Empty
   LogicT a <|> b = LogicT $ a >>= \case
-    Empty -> runLogicT b
+    Empty   -> runLogicT b
     h :&: t -> pure $ h :&: (t <|> b)
 
 instance Monad m => MonadPlus (LogicT m) where

@@ -1,23 +1,23 @@
-{-# language GADTs #-}
-{-# language ViewPatterns #-}
-{-# language PatternGuards #-}
-{-# language PatternSynonyms #-}
-{-# language DeriveFunctor #-}
+{-# LANGUAGE DeriveFunctor   #-}
+{-# LANGUAGE GADTs           #-}
+{-# LANGUAGE PatternGuards   #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE ViewPatterns    #-}
 
 module Walk where
 
-import Control.Applicative
-import Control.Monad
-import Data.Int
-import Data.List (unfoldr)
-import Data.Ratio
+import           Control.Applicative
+import           Control.Monad
+import           Data.Int
+import           Data.List           (unfoldr)
+import           Data.Ratio
 
 -- TODO: use Unaligned.Internal.View
 stream :: (s -> Maybe (o, s)) -> (s -> i -> s) -> s -> [i] -> [o]
 stream f g z xs = case f z of
   Just (y, z') -> y : stream f g z' xs
   Nothing -> case xs of
-    [] -> []
+    []   -> []
     x:xs -> stream f g (g z x) xs
 
 unstream
@@ -27,7 +27,7 @@ unstream
   -> (r -> o -> r)
   -> s -> r -> [i]
 unstream f g h k z w = case f z of
-  Just (y, z') -> unstream f g h k z' (k w y)
+  Just (y, z')         -> unstream f g h k z' (k w y)
   Nothing | x <- h z w -> x : unstream f g h k (g z x) w
 
 -- <https://www.cs.ox.ac.uk/jeremy.gibbons/publications/arith.pdf>
@@ -46,7 +46,7 @@ unit = I 0 1
 within :: Q -> I -> Bool
 within x (I l r) = l <= x && x < r
 
-pick :: I -> Q 
+pick :: I -> Q
 pick (I l r) = (l + r) / 2
 
 lerp :: I -> Q -> Q
@@ -97,7 +97,7 @@ hi (I _ r) = r
 pattern E :: Int -> I -> EI
 pattern E n ilr <- EI n l (I l -> ilr) where
   E n ilr = EI n (lo ilr) (hi ilr)
- 
+
 -- reports the number of times it had to expand
 expand :: EI -> EI
 expand (EI n l r)
@@ -124,7 +124,7 @@ nextBits (EI n l r)
   | r <= 0.5  = Just (bits n 0, I (2*l) (2*r))
   | 0.5 <= l  = Just (bits n 1, I (2*l-1) (2*r-1))
   | otherwise = Nothing
-  
+
 bits :: Int -> Bit -> [Bit]
 bits n b = b : replicate n (1-b)
 
@@ -133,7 +133,7 @@ bits n b = b : replicate n (1-b)
 {-
 -- 64 bit numbers for intervals
 data I = I {-# unpack #-} !Int64 {-# unpack #-} !Int64
-data II = II {-# unpack #-} !Int64 {-# unpack #-} !Int64 {-# unpack #-} !Int64 
+data II = II {-# unpack #-} !Int64 {-# unpack #-} !Int64 {-# unpack #-} !Int64
 
 inarrow :: I -> II -> I
 inarrow (I l r) (II p q d) = I (l + div ((r-l)*p) d) (r + div ((r-l)*q) d)
@@ -171,7 +171,7 @@ open = BRANCH open open
 
 branch :: History -> History -> History
 branch Done Done = Done
-branch x y = Branch x y
+branch x y       = Branch x y
 
 pattern Branch :: History -> History -> History
 pattern Branch x y <- BRANCH x y where
@@ -193,20 +193,20 @@ instance Monad m => Alternative (M m) where
   -- would it be better to explicitly manage a zipper?
   l <|> r = M $ \ rand k h -> case h of
     Done -> pure Done
-    Branch a Done -> (\a' -> Branch a' Done) <$> runM l rand k a
-    Branch Done b -> (\b' -> Branch Done b') <$> runM r rand k b
+    Branch a Done -> (`Branch` Done) <$> runM l rand k a
+    Branch Done b -> (Branch Done) <$> runM r rand k b
     Branch a b -> do
       c <- rand
-      if c then (\a' -> Branch a' b) <$> runM l rand k a
-      else (\b' -> Branch a b') <$> runM r rand k b
+      if c then (`Branch` b) <$> runM l rand k a
+      else (Branch a) <$> runM r rand k b
 
 instance Monad m => MonadPlus (M m) where
-  mplus = (<|>) 
+  mplus = (<|>)
   mzero = empty
 
 {-
 invariant: Branch Done Done = Done
 
-with the idea that these can be used to help inform a 
+with the idea that these can be used to help inform a
 -}
 

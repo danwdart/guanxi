@@ -1,9 +1,9 @@
-{-# language GADTs #-}
-{-# language ExistentialQuantification #-}
-{-# language ViewPatterns #-}
-{-# language PatternSynonyms #-}
-{-# language LambdaCase #-}
-{-# language FlexibleContexts #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE FlexibleContexts          #-}
+{-# LANGUAGE GADTs                     #-}
+{-# LANGUAGE LambdaCase                #-}
+{-# LANGUAGE PatternSynonyms           #-}
+{-# LANGUAGE ViewPatterns              #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,15 +14,15 @@
 
 module Aligned.Freer where
 
-import Aligned.Base
-import Control.Applicative
-import Control.Arrow (Kleisli(..))
-import Control.Monad (ap, liftM, guard, join)
-import Control.Category
-import Data.Functor
-import Prelude hiding ((.),id)
-import Ref
-import Unification.Class
+import           Aligned.Base
+import           Control.Applicative
+import           Control.Arrow       (Kleisli (..))
+import           Control.Category
+import           Control.Monad       (ap, guard, join, liftM)
+import           Data.Functor
+import           Prelude             hiding (id, (.))
+import           Ref
+import           Unification.Class
 
 data Free f a where
   F :: FreeView f x -> Rev Cat (Kleisli (Free f)) x b -> Free f b
@@ -32,11 +32,11 @@ data FreeView f a
   | forall x. Free (f x) (x -> Free f a)
 
 instance Functor (FreeView f) where
-  fmap f (Pure a) = Pure (f a)
+  fmap f (Pure a)    = Pure (f a)
   fmap f (Free fx k) = Free fx (fmap f . k)
 
 instance Foldable f => Foldable (FreeView f) where
-  foldMap f (Pure a) = f a
+  foldMap f (Pure a)    = f a
   foldMap f (Free fx k) = foldMap (foldMap f . k) fx
 
 instance Traversable f => Traversable (FreeView f) where

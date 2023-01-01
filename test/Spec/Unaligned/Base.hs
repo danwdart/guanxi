@@ -1,9 +1,9 @@
-{-# language OverloadedLists #-}
+{-# LANGUAGE OverloadedLists #-}
 module Spec.Unaligned.Base where
 
-import Data.Foldable
-import Test.Hspec
-import Unaligned.Internal
+import           Data.Foldable
+import           Test.Hspec
+import           Unaligned.Internal
 
 spec :: Spec
 spec = do

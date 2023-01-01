@@ -1,19 +1,19 @@
-{-# language PatternSynonyms #-}
-{-# language ImplicitParams #-}
-{-# language ConstraintKinds #-}
-{-# language ViewPatterns #-}
-{-# language GeneralizedNewtypeDeriving #-}
-{-# language PolyKinds #-}
-{-# language DataKinds #-}
-{-# language UnboxedTuples #-}
+{-# LANGUAGE ConstraintKinds            #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ImplicitParams             #-}
+{-# LANGUAGE PatternSynonyms            #-}
+{-# LANGUAGE PolyKinds                  #-}
+{-# LANGUAGE UnboxedTuples              #-}
+{-# LANGUAGE ViewPatterns               #-}
 module SAT where
 
-import Control.Monad
-import Control.Monad.Primitive
-import Data.Bits
-import Data.Primitive.Types
-import Data.Word
-import Vec
+import           Control.Monad
+import           Control.Monad.Primitive
+import           Data.Bits
+import           Data.Primitive.Types
+import           Data.Word
+import           Vec
 
 newtype Val = Val Word8
   deriving (Eq,Ord,Prim)
@@ -25,8 +25,8 @@ pattern UNKNOWN = Val 2
 
 known :: Val -> Maybe Bool
 known UNKNOWN = Nothing
-known FALSE = Just False
-known TRUE = Just True
+known FALSE   = Just False
+known TRUE    = Just True
 
 pattern Known :: Bool -> Val
 pattern Known v <- (known -> Just v) where
@@ -36,8 +36,8 @@ pattern Known v <- (known -> Just v) where
 {-# complete Known, UNKNOWN #-}
 
 instance Show Val where
-  show TRUE = "TRUE"
-  show FALSE = "FALSE"
+  show TRUE    = "TRUE"
+  show FALSE   = "FALSE"
   show UNKNOWN = "UNKNOWN"
 
 newtype Lit s = LIT Int
@@ -45,7 +45,7 @@ newtype Lit s = LIT Int
 
 mklit :: Var s -> Bool -> Lit s
 mklit (Var i) False = LIT i
-mklit (Var i) True = LIT (complement i)
+mklit (Var i) True  = LIT (complement i)
 
 decode :: Lit s -> (Var s, Bool)
 decode (LIT i)
@@ -58,7 +58,7 @@ pattern Lit i s <- (decode -> (i, s)) where
 
 data SAT s = SAT
   { _assignments :: Vector s Val
-  , _trail :: Vector s (Lit s)
+  , _trail       :: Vector s (Lit s)
   }
 
 assignments :: GivenSAT s => Vector s Val
@@ -89,5 +89,5 @@ writeVar v@(Var i) b entrail = do
   old <- writeBackVector assignments i new
   guard (old == UNKNOWN || old == new)
   when (old == UNKNOWN && entrail) $
-    () <$ addBackVector (Lit v b) trail
+    void (addBackVector (Lit v b) trail)
 {-# inline writeVar #-}

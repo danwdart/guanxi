@@ -1,8 +1,8 @@
-{-# language RankNTypes #-}
-{-# language TypeOperators #-}
-{-# language UndecidableInstances #-}
-{-# language DefaultSignatures #-}
-{-# language FlexibleContexts #-}
+{-# LANGUAGE DefaultSignatures    #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE RankNTypes           #-}
+{-# LANGUAGE TypeOperators        #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -15,8 +15,8 @@
 
 module Sharing where
 
-import GHC.Generics
-import Ref
+import           GHC.Generics
+import           Ref
 
 class GShareable f where
   gsharing
@@ -85,7 +85,7 @@ instance (Shareable1 f, Shareable1 g) => Shareable1 (f :.: g) where
   sharing1 g f (Comp1 x) = Comp1 <$> sharing1 (sharing1 g) f x
 
 eval :: (MonadRef m, Shareable a) => a -> m a
-eval = sharing $ \a -> a >>= eval >>= return . return
+eval = sharing $ \a -> (a >>= eval) Data.Functor.<&> return
 
 share ::  (MonadRef m, Shareable a) => m a -> m (m a)
 share m = memo $ m >>= sharing share

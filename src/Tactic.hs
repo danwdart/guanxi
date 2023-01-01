@@ -1,5 +1,5 @@
-{-# language RankNTypes #-}
-{-# language DeriveTraversable #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE RankNTypes        #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,11 +14,11 @@
 
 module Tactic where
 
-import Data.Bifoldable
-import Data.Bifunctor
-import Data.Bitraversable
-import Control.Applicative
-import Control.Monad (ap, MonadPlus(..))
+import           Control.Applicative
+import           Control.Monad       (MonadPlus (..), ap)
+import           Data.Bifoldable
+import           Data.Bifunctor
+import           Data.Bitraversable
 
 data T s a = Proof a | Goal s | Failed
   deriving (Functor,Foldable,Traversable)
@@ -27,8 +27,8 @@ instance Bifunctor T where bimap = bimapDefault
 instance Bifoldable T where bifoldMap = bifoldMapDefault
 instance Bitraversable T where
   bitraverse _ g (Proof b) = Proof <$> g b
-  bitraverse f _ (Goal a) = Goal <$> f a
-  bitraverse _ _ Failed = pure Failed
+  bitraverse f _ (Goal a)  = Goal <$> f a
+  bitraverse _ _ Failed    = pure Failed
 
 -- uncps
 lower :: Applicative m => Tactic g m a -> g -> m (T g a)

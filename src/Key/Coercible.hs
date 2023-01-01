@@ -1,11 +1,11 @@
-{-# language TypeOperators #-}
-{-# language TypeFamilies #-}
-{-# language FlexibleContexts #-}
-{-# language UndecidableInstances #-}
-{-# language ScopedTypeVariables #-}
-{-# language RankNTypes #-}
-{-# language GADTs #-}
-{-# language RoleAnnotations #-}
+
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE GADTs                #-}
+{-# LANGUAGE RankNTypes           #-}
+{-# LANGUAGE RoleAnnotations      #-}
+{-# LANGUAGE ScopedTypeVariables  #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -26,12 +26,12 @@ module Key.Coercible
   , Box(Lock), unlock
   ) where
 
-import Control.Monad.Primitive
-import Data.Coerce
-import Data.Primitive.MutVar
-import Data.Proxy
-import Data.Type.Coercion
-import Unsafe.Coerce
+import           Control.Monad.Primitive
+import           Data.Coerce
+import           Data.Primitive.MutVar
+import           Data.Proxy
+import           Data.Type.Coercion
+import           Unsafe.Coerce
 
 newtype Key m a = Key (MutVar (PrimState m) (Proxy a))
   deriving Eq
@@ -52,5 +52,5 @@ data Box m where
 unlock :: Key m a -> Box m -> Maybe a
 unlock k (Lock l x) = case testCoercion k l of
   Just Coercion -> Just $ coerce x
-  Nothing -> Nothing
+  Nothing       -> Nothing
 {-# inline unlock #-}

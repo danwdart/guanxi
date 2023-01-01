@@ -1,7 +1,7 @@
-{-# language LambdaCase #-}
-{-# language TypeFamilies #-}
-{-# language RankNTypes #-}
-{-# language CPP #-}
+{-# LANGUAGE CPP          #-}
+{-# LANGUAGE LambdaCase   #-}
+{-# LANGUAGE RankNTypes   #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -19,17 +19,17 @@ module Logic.Reflection
   , view, unview
   ) where
 
-import Control.Monad
-import Control.Monad.Fail as Fail
-import Control.Monad.Primitive
-import Control.Monad.Trans
-import Control.Applicative
-import Data.Bifunctor
-import Data.Bifoldable
-import Data.Bitraversable
-import Data.Functor.Identity
-import Logic.Class
-import Unaligned.Base
+import           Control.Applicative
+import           Control.Monad
+import           Control.Monad.Fail      as Fail
+import           Control.Monad.Primitive
+import           Control.Monad.Trans
+import           Data.Bifoldable
+import           Data.Bifunctor
+import           Data.Bitraversable
+import           Data.Functor.Identity
+import           Logic.Class
+import           Unaligned.Base
 
 type L m a = View a (LogicT m a)
 
@@ -75,7 +75,7 @@ view :: Monad m => LogicT m a -> m (L m a)
 view (LogicT s) = case uncons s of
   Empty -> return Empty
   h :&: t -> h >>= \case
-    Empty -> view (LogicT t)
+    Empty            -> view (LogicT t)
     hi :&: LogicT ti -> return $ hi :&: LogicT (ti <> t)
 
 instance Monad m => Applicative (LogicT m) where
@@ -88,7 +88,7 @@ instance Monad m => Alternative (LogicT m) where
 
 instance Monad m => Monad (LogicT m) where
   m >>= f = unview $ view m >>= \case
-    Empty -> return Empty
+    Empty   -> return Empty
     h :&: t -> view $ f h <|> (t >>= f)
 
 #if __GLASGOW_HASKELL__ < 808
@@ -118,7 +118,7 @@ instance PrimMonad m => PrimMonad (LogicT m) where
 observe :: Logic a -> a
 observe m = runIdentity $ view m >>= go where
   go (a :&: _) = return a
-  go _ = return (error "no results")
+  go _         = return (error "no results")
 
 observeMany :: Int -> Logic a -> [a]
 observeMany n = runIdentity . observeManyT n
@@ -127,21 +127,21 @@ observeAll :: Logic a -> [a]
 observeAll m = go (runIdentity (view m)) where
   go :: forall a. View a (Logic a) -> [a]
   go (a :&: t) = a : observeAll t
-  go _ = []
+  go _         = []
 
 observeT :: MonadFail m => LogicT m a -> m a
 observeT m = view m >>= go where
   go (a :&: _) = return a
-  go _ = Fail.fail "No results"
+  go _         = Fail.fail "No results"
 
 observeManyT :: Monad m => Int -> LogicT m a -> m [a]
 observeManyT n m
   | n <= 0 = return []
   | otherwise = view m >>= \case
-    Empty -> return []
+    Empty    -> return []
     a :&: m1 -> (a:) <$> observeManyT (n-1) m1
 
 observeAllT :: Monad m => LogicT m a -> m [a]
 observeAllT m = view m >>= go where
   go (a :&: t) = (a:) <$> observeAllT t
-  go _ = return []
+  go _         = return []

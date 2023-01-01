@@ -1,15 +1,15 @@
-{-# language TemplateHaskell #-}
-{-# language LambdaCase #-}
-{-# language StandaloneDeriving #-}
-{-# language MultiParamTypeClasses #-}
-{-# language FunctionalDependencies #-}
-{-# language FlexibleInstances #-}
-{-# language UndecidableInstances #-}
-{-# language FlexibleContexts #-}
-{-# language DeriveFunctor #-}
-{-# language GeneralizedNewtypeDeriving #-}
-{-# language PatternSynonyms #-}
-{-# language TypeFamilies #-}
+{-# LANGUAGE LambdaCase                 #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TemplateHaskell            #-}
+
+{-# LANGUAGE DeriveFunctor              #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE FunctionalDependencies     #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE PatternSynonyms            #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -25,20 +25,20 @@ module Par.Cont
   , parState
   ) where
 
-import Control.Monad hiding (fail)
-import Control.Monad.Cont hiding (fail) -- fix this API!
-import Control.Monad.Fail
-import Control.Monad.Primitive
-import Control.Monad.Reader.Class
-import Control.Monad.State.Strict hiding (fail) -- fix this API!
-import Control.Applicative
-import Control.Lens hiding (Empty, snoc, uncons)
-import Data.Default
-import Logic.Class
-import Par.Class
-import Prelude hiding (fail)
-import Ref
-import Unaligned.Base
+import           Control.Applicative
+import           Control.Lens               hiding (Empty, snoc, uncons)
+import           Control.Monad              hiding (fail)
+import           Control.Monad.Cont         hiding (fail)
+import           Control.Monad.Fail
+import           Control.Monad.Primitive
+import           Control.Monad.Reader.Class
+import           Control.Monad.State.Strict hiding (fail)
+import           Data.Default
+import           Logic.Class
+import           Par.Class
+import           Prelude                    hiding (fail)
+import           Ref
+import           Unaligned.Base
 
 type Task m = ParEnv m -> m (ParEnv m)
 
@@ -56,7 +56,7 @@ statePar (Par m) = StateT $ \s -> do
   s' <- m (\ a s' -> s' <$ writeRef r (Just a)) s
   readRef r >>= \case
     Nothing -> empty
-    Just a -> pure (a, s')
+    Just a  -> pure (a, s')
 
 newtype Par m a = Par
   { runPar :: (a -> Task m) -> Task m
@@ -110,7 +110,7 @@ apply (f,x) = f x
 hcf :: Applicative m => Task m -- ParEnv m -> m (ParEnv m)
 hcf s = apply $ s & todo %%~ \xss -> case uncons xss of
   x :&: xs -> (x, xs)
-  Empty -> (pure, Nil)
+  Empty    -> (pure, Nil)
 
 instance MonadCont (Par m) where
   callCC f = Par $ \ c -> runPar (f (\ x -> Par $ \ _ -> c x)) c

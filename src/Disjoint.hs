@@ -1,7 +1,7 @@
-{-# language FlexibleInstances #-}
-{-# language FlexibleContexts #-}
-{-# language MultiParamTypeClasses #-}
-{-# language LambdaCase #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,9 +14,9 @@
 -- a theory of equality without disequality constraints
 module Disjoint where
 
-import Control.Applicative (liftA2)
-import Control.Monad.Primitive
-import Ref
+import           Control.Applicative     (liftA2)
+import           Control.Monad.Primitive
+import           Ref
 
 data Content s
   = Root {-# unpack #-} !Int

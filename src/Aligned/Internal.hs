@@ -1,9 +1,9 @@
-{-# language GADTs #-}
-{-# language PolyKinds #-}
-{-# language RankNTypes #-}
-{-# language ScopedTypeVariables #-}
-{-# language PatternSynonyms #-}
-{-# language ViewPatterns #-}
+{-# LANGUAGE GADTs               #-}
+{-# LANGUAGE PatternSynonyms     #-}
+{-# LANGUAGE PolyKinds           #-}
+{-# LANGUAGE RankNTypes          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ViewPatterns        #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -34,10 +34,10 @@ module Aligned.Internal
   , pattern Nil
   ) where
 
-import Prelude hiding (id,(.))
-import Control.Category
-import Data.Kind
-import Data.Default
+import           Control.Category
+import           Data.Default
+import           Data.Kind
+import           Prelude          hiding (id, (.))
 
 --------------------------------------------------------------------------------
 -- * Interface
@@ -115,12 +115,12 @@ instance Cons t => Snoc (Rev t) where
 instance Uncons t => Unsnoc (Rev t) where
   unsnoc (Rev t) = case uncons t of
     Op l :&: r -> Rev r :&: l
-    Empty -> Empty
+    Empty      -> Empty
 
 instance Unsnoc t => Uncons (Rev t) where
   uncons (Rev t) = case unsnoc t of
     l :&: Op r -> r :&: Rev l
-    Empty -> Empty
+    Empty      -> Empty
 
 instance Snoc t => Cons (Rev t) where
   cons a (Rev b) = Rev (snoc b (Op a))
@@ -147,8 +147,8 @@ instance a ~ b => Default (Thrist f a b) where
 
 instance Category (Thrist f) where
   id = Id
-  xs . Id = xs
-  Id . ys = ys
+  xs . Id        = xs
+  Id . ys        = ys
   (x :. xs) . ys = x :. (xs . ys)
 
 instance Nil Thrist where
@@ -159,7 +159,7 @@ instance Cons Thrist where
 
 instance Uncons Thrist where
   uncons (a :. b) = a :&: b
-  uncons Id = Empty
+  uncons Id       = Empty
 
 instance Singleton Thrist where
   singleton a = a :. Id
@@ -184,8 +184,8 @@ instance Cons Q where
 
 instance Uncons Q where
   uncons (Q Id (Rev Id) _) = Empty
-  uncons (Q (x :. f) r s) = x :&: exec f r s
-  uncons _ = error "Q.uncons: invariants violated"
+  uncons (Q (x :. f) r s)  = x :&: exec f r s
+  uncons _                 = error "Q.uncons: invariants violated"
 
 instance Singleton Q where
   singleton a = Q (singleton a) nil nil
@@ -195,12 +195,12 @@ instance Snoc Q where
 
 exec :: Thrist f b c -> Rev Thrist f a b -> Thrist f b x -> Q f a c
 exec xs ys (_ :. t) = Q xs ys t
-exec xs ys Id        = Q xs' nil xs' where xs' = rotate xs ys nil
+exec xs ys Id       = Q xs' nil xs' where xs' = rotate xs ys nil
 
 rotate :: Thrist f c d -> Rev Thrist f b c -> Thrist f a b -> Thrist f a d
-rotate Id (Rev (Op y :. Id)) a = y :. a
+rotate Id (Rev (Op y :. Id)) a        = y :. a
 rotate (x :. xs) (Rev (Op y :. ys)) a = x :. rotate xs (Rev ys) (y :. a)
-rotate _ _ _ = error "Q.rotate: invariant broken"
+rotate _ _ _                          = error "Q.rotate: invariant broken"
 
 --------------------------------------------------------------------------------
 -- * Catenable lists
@@ -220,7 +220,7 @@ foldCat
   -> Cat f a b -> g a b
 foldCat f2g = go where
   go :: Cat f x y -> g x y
-  go E = id
+  go E           = id
   go (Cons f fs) = f2g f . go fs
 {-# inline foldCat #-}
 
@@ -230,8 +230,8 @@ instance a ~ b => Default (Cat f a b) where
 instance Category (Cat f) where
   id = E
 
-  E . xs = xs
-  xs . E = xs
+  E . xs      = xs
+  xs . E      = xs
   C x xs . ys = link x xs ys
 
 link :: f c d -> Q (Cat f) b c -> Cat f a b -> Cat f a d
@@ -242,7 +242,7 @@ linkAll :: Q (Cat f) a b -> Cat f a b
 linkAll q = case uncons q of
   c@(C a t) :&: q' -> case uncons q' of
     Empty -> c
-    _ -> link a t (linkAll q')
+    _     -> link a t (linkAll q')
   E :&: q' -> linkAll q' -- recursive case in case of empty queues, unused
   Empty -> E
 
@@ -250,7 +250,7 @@ instance Nil Cat where
   nil = E
 
 instance Uncons Cat where
-  uncons E = Empty
+  uncons E       = Empty
   uncons (C a q) = a :&: linkAll q
 
 instance Cons Cat where

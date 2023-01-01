@@ -1,15 +1,15 @@
-{-# language BlockArguments #-}
-{-# language TupleSections #-}
-{-# language PatternSynonyms #-}
+{-# LANGUAGE BlockArguments  #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE TupleSections   #-}
 module Vec where
 
-import Control.Monad.Primitive
-import Control.Monad.ST
-import Data.Bits
-import Data.Primitive.Types
-import Data.Primitive.PrimArray
-import Data.Primitive.MutVar
-import Ref
+import           Control.Monad.Primitive
+import           Control.Monad.ST
+import           Data.Bits
+import           Data.Primitive.MutVar
+import           Data.Primitive.PrimArray
+import           Data.Primitive.Types
+import           Ref
 
 -- transient
 data Vec s a = Vec {-# unpack #-} !Int {-# unpack #-} !(MutablePrimArray s a)
@@ -48,12 +48,12 @@ subVec (Vec i pa) = stToPrim do
   else Vec (i-1) <$> resizeMutablePrimArray pa (n*2)
 
 readVec :: (PrimMonad m, Prim a) => Vec (PrimState m) a -> Int -> m a
-readVec (Vec _ pa) i = readPrimArray pa i
+readVec (Vec _ pa) = readPrimArray pa
 {-# inline readVec #-}
 
 -- doesn't change shape
 writeVec :: (PrimMonad m, Prim a) => Vec (PrimState m) a -> Int -> a -> m ()
-writeVec (Vec _ pa) i a = writePrimArray pa i a
+writeVec (Vec _ pa) = writePrimArray pa
 {-# inline writeVec #-}
 
 sizeVec :: Vec s a -> Int
@@ -82,7 +82,7 @@ modifyVector (Vector ref) k = stToPrim $ (readMutVar ref >>= k) >>= writeMutVar 
 {-# inline modifyVector #-}
 
 addVector :: (PrimMonad m, Prim a) => a -> Vector (PrimState m) a -> m Int
-addVector a v = nonAtomicModifyVector v \vec -> addVec a vec
+addVector a v = nonAtomicModifyVector v addVec a
 {-# inline addVector #-}
 
 subVector :: (PrimMonad m, Prim a) => Vector (PrimState m) a -> m ()

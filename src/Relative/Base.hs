@@ -1,4 +1,4 @@
-{-# language PatternSynonyms #-}
+{-# LANGUAGE PatternSynonyms #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -33,4 +33,4 @@ module Relative.Base
   , RelativeMonoid
   ) where
 
-import Relative.Internal
+import           Relative.Internal

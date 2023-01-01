@@ -1,7 +1,7 @@
-{-# language DeriveTraversable #-}
-{-# language TypeFamilies #-}
-{-# language PatternSynonyms #-}
-{-# language ViewPatterns #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE PatternSynonyms   #-}
+{-# LANGUAGE TypeFamilies      #-}
+{-# LANGUAGE ViewPatterns      #-}
 
 module Unaligned.Internal
   ( View(..)
@@ -22,14 +22,14 @@ module Unaligned.Internal
   , linkAll
   ) where
 
-import Control.Applicative.Backwards
-import Data.Bifunctor
-import Data.Bifoldable
-import Data.Bitraversable
-import Data.Default
-import Data.Foldable as Foldable
-import Data.Semigroup (Dual(..))
-import GHC.Exts
+import           Control.Applicative.Backwards
+import           Data.Bifoldable
+import           Data.Bifunctor
+import           Data.Bitraversable
+import           Data.Default
+import           Data.Foldable                 as Foldable
+import           Data.Semigroup                (Dual (..))
+import           GHC.Exts
 
 --------------------------------------------------------------------------------
 -- * Interface
@@ -42,15 +42,15 @@ instance Default (View a b) where
   def = Empty
 
 instance Bifunctor View where
-  bimap _ _ Empty = Empty
+  bimap _ _ Empty     = Empty
   bimap f g (a :&: b) = f a :&: g b
 
 instance Bifoldable View where
-  bifoldMap _ _ Empty = mempty
+  bifoldMap _ _ Empty     = mempty
   bifoldMap f g (a :&: b) = f a <> g b
 
 instance Bitraversable View where
-  bitraverse _ _ Empty = pure Empty
+  bitraverse _ _ Empty     = pure Empty
   bitraverse f g (a :&: b) = (:&:) <$> f a <*> g b
 
 -- TODO: use Control.Lens.Cons?
@@ -115,12 +115,12 @@ instance Cons t => Snoc (Rev t) where
 instance Uncons t => Unsnoc (Rev t) where
   unsnoc (Rev t) = case uncons t of
     l :&: r -> Rev r :&: l
-    Empty -> Empty
+    Empty   -> Empty
 
 instance Unsnoc t => Uncons (Rev t) where
   uncons (Rev t) = case unsnoc t of
     l :&: r -> r :&: Rev l
-    Empty -> Empty
+    Empty   -> Empty
 
 instance Snoc t => Cons (Rev t) where
   cons a (Rev b) = Rev (snoc b a)
@@ -141,7 +141,7 @@ instance Cons [] where
   cons = (:)
 
 instance Uncons [] where
-  uncons [] = Empty
+  uncons []    = Empty
   uncons (a:b) = a :&: b
 
 instance Singleton [] where
@@ -186,8 +186,8 @@ instance Cons Q where
 
 instance Uncons Q where
   uncons (Q [] (Rev []) _) = Empty
-  uncons (Q (x:f) r s) = x :&: exec f r s
-  uncons _ = error "Q.uncons: invariants violated"
+  uncons (Q (x:f) r s)     = x :&: exec f r s
+  uncons _                 = error "Q.uncons: invariants violated"
 
 instance Singleton Q where
   singleton a = Q [a] nil [a]
@@ -200,9 +200,9 @@ exec xs ys (_:t) = Q xs ys t
 exec xs ys []    = Q xs' (Rev []) xs' where xs' = rotate xs ys nil
 
 rotate :: [a] -> Rev [] a -> [a] -> [a]
-rotate [] (Rev [y]) a = y:a
+rotate [] (Rev [y]) a        = y:a
 rotate (x:xs) (Rev (y:ys)) a = x:rotate xs (Rev ys) (y:a)
-rotate _ _ _ = error "Q.rotate: invariant broken"
+rotate _ _ _                 = error "Q.rotate: invariant broken"
 
 --------------------------------------------------------------------------------
 -- * Catenable lists
@@ -222,8 +222,8 @@ instance Default (Cat a) where
   def = E
 
 instance Semigroup (Cat a) where
-  E <> xs = xs
-  xs <> E = xs
+  E <> xs      = xs
+  xs <> E      = xs
   C x xs <> ys = link x xs ys
 
 instance Monoid (Cat a) where
@@ -243,7 +243,7 @@ linkAll :: Q (Cat a) -> Cat a
 linkAll q = case uncons q of
   c@(C a t) :&: q' -> case uncons q' of
     Empty -> c
-    _ -> link a t (linkAll q')
+    _     -> link a t (linkAll q')
   E :&: q' -> linkAll q' -- recursive case in case of empty queues, unused
   Empty -> E
 
@@ -251,7 +251,7 @@ instance Nil Cat where
   nil = E
 
 instance Uncons Cat where
-  uncons E = Empty
+  uncons E       = Empty
   uncons (C a q) = a :&: linkAll q
 
 instance Cons Cat where

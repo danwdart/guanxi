@@ -1,9 +1,9 @@
-{-# language GADTs #-}
-{-# language DeriveTraversable #-}
-{-# language ViewPatterns #-}
-{-# language PatternSynonyms #-}
-{-# language LambdaCase #-}
-{-# language FlexibleContexts #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE GADTs             #-}
+{-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE PatternSynonyms   #-}
+{-# LANGUAGE ViewPatterns      #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,14 +14,14 @@
 
 module Aligned.Free where
 
-import Aligned.Base
-import Control.Applicative
-import Control.Arrow (Kleisli(..))
-import Control.Monad (ap, liftM, guard, join)
-import Control.Category
-import Prelude hiding ((.),id)
-import Ref
-import Unification.Class
+import           Aligned.Base
+import           Control.Applicative
+import           Control.Arrow       (Kleisli (..))
+import           Control.Category
+import           Control.Monad       (ap, guard, join, liftM)
+import           Prelude             hiding (id, (.))
+import           Ref
+import           Unification.Class
 
 
 data Free f a where

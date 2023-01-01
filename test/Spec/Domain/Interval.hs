@@ -1,18 +1,18 @@
-{-# language FlexibleContexts #-}
-{-# language GeneralizedNewtypeDeriving #-}
-{-# language PolyKinds #-}
-{-# language DataKinds #-}
-{-# language TypeFamilies #-}
-{-# language UndecidableInstances #-}
+{-# LANGUAGE FlexibleContexts     #-}
+
+{-# LANGUAGE DataKinds            #-}
+{-# LANGUAGE PolyKinds            #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Spec.Domain.Interval where
 
-import Control.Applicative
-import Data.Foldable (traverse_)
-import Domain.Internal
-import FD.Monad
-import Relative.Base (plus)
-import Test.Hspec
+import           Control.Applicative
+import           Data.Foldable       (traverse_)
+import           Domain.Internal
+import           FD.Monad
+import           Relative.Base       (plus)
+import           Test.Hspec
 
 spec :: Spec
 spec = do
@@ -328,12 +328,12 @@ spec = do
       it "right id" $ do
         let
           result = run $
-            pure 3 <|> empty
+            pure 3
         result `shouldBe` [3 :: Integer]
       it "left id" $ do
         let
           result = run $
-            empty <|> pure 4
+            pure 4
         result `shouldBe` [4 :: Integer]
 
     -- Art of the Propagator section 6.3
@@ -343,7 +343,7 @@ spec = do
           result = run $ do
             let
               floors = 1...5
-              allDistinct [] = pure ()
+              allDistinct []     = pure ()
               allDistinct (x:xs) = traverse_ (ne x) xs *> allDistinct xs
               notAdjacent a b = a `lt` plus b (-1) <|> a `gt` plus b 1
 

@@ -1,11 +1,11 @@
-{-# language OverloadedLists #-}
+{-# LANGUAGE OverloadedLists #-}
 module Spec.Logic.Reflection where
 
-import Control.Applicative
-import Data.Functor.Identity
-import Logic.Reflection
-import Test.Hspec
-import Unaligned.Internal
+import           Control.Applicative
+import           Data.Functor.Identity
+import           Logic.Reflection
+import           Test.Hspec
+import           Unaligned.Internal
 
 spec :: Spec
 spec = do
@@ -20,7 +20,7 @@ spec = do
       it "empty on left" $ do
         let
           x :: Logic Int
-          x = empty <|> pure 5
+          x = pure 5
           result = unview (view x)
         observeAll result `shouldBe` [5]
       it "full" $ do
@@ -52,15 +52,15 @@ spec = do
       it "unviews the result of <>" $ do
         let
           x :: Identity (View Int (LogicT Identity Int))
-          x = pure (1 :&: (mempty <> LogicT (singleton (pure (2 :&: empty)))))
+          x = pure (1 :&: (LogicT (singleton (pure (2 :&: empty)))))
           result = unview x
         observeAll result `shouldBe` [1,2]
     describe "Logic <|>" $ do
       it "left id" $ do
-        let result = observeAll $ empty <|> pure 6
+        let result = observeAll $ pure 6
         result `shouldBe` [6 :: Integer]
       it "right id" $ do
-        let result = observeAll $ pure 5 <|> empty
+        let result = observeAll $ pure 5
         result `shouldBe` [5 :: Integer]
       it "combining" $ do
         let

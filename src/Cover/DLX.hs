@@ -1,12 +1,12 @@
-{-# language ForeignFunctionInterface #-}
-{-# language KindSignatures #-}
-{-# language MultiParamTypeClasses #-}
-{-# language FunctionalDependencies #-}
-{-# language MultiWayIf #-}
-{-# language LambdaCase #-}
-{-# language ScopedTypeVariables #-}
-{-# language ViewPatterns #-}
-{-# language FlexibleInstances #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE KindSignatures           #-}
+
+{-# LANGUAGE FlexibleInstances        #-}
+{-# LANGUAGE FunctionalDependencies   #-}
+{-# LANGUAGE LambdaCase               #-}
+{-# LANGUAGE MultiWayIf               #-}
+{-# LANGUAGE ScopedTypeVariables      #-}
+{-# LANGUAGE ViewPatterns             #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018-2019
@@ -29,17 +29,17 @@ module Cover.DLX
   , count
   ) where
 
-import Control.Applicative
-import Control.Lens (ifor_)
-import Control.Monad.Primitive
-import Data.Kind
-import Data.Traversable
-import Data.Word
-import Foreign.C.Types
-import Foreign.ForeignPtr
-import Foreign.Marshal.Alloc
-import Foreign.Ptr
-import Foreign.Storable
+import           Control.Applicative
+import           Control.Lens            (ifor_)
+import           Control.Monad.Primitive
+import           Data.Kind
+import           Data.Traversable
+import           Data.Word
+import           Foreign.C.Types
+import           Foreign.ForeignPtr
+import           Foreign.Marshal.Alloc
+import           Foreign.Ptr
+import           Foreign.Storable
 
 data DLX
 type Item = Word32
@@ -93,12 +93,10 @@ sizeOfWord32 = sizeOf (undefined :: Word32)
 
 next :: HasCover m s => s -> m (Maybe [Int])
 next d = withCover d $ \p -> allocaBytes (sizeOfPtr + sizeOfWord32) $ \q ->
-  c_next p (castPtr q) (plusPtr q sizeOfPtr) >>= \ok -> if
-    | ok /= 0 -> do
-      (is :: Ptr Item) <- peekByteOff q 0
-      (n :: Word32) <- peekByteOff q sizeOfPtr
-      Just <$> for [0..n-1] (fmap fromIntegral . peekElemOff is . fromIntegral)
-    | otherwise -> pure Nothing;
+  c_next p (castPtr q) (plusPtr q sizeOfPtr) >>= \ok -> (if ok /= 0 then (do
+                                                           (is :: Ptr Item) <- peekByteOff q 0
+                                                           (n :: Word32) <- peekByteOff q sizeOfPtr
+                                                           Just <$> for [0..n-1] (fmap fromIntegral . peekElemOff is . fromIntegral)) else pure Nothing);
 
 reset :: HasCover m s => s -> m ()
 reset d = withCover d c_reset

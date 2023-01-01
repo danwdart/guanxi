@@ -1,13 +1,13 @@
-{-# language LambdaCase #-}
+{-# LANGUAGE LambdaCase #-}
 module Spec.Prompt.Iterator where
 
-import Data.Semigroup
-import Data.Foldable
-import Prompt.Class
-import Prompt.Iterator
-import Prompt.Reflection
-import Test.Hspec hiding (example)
-import Unaligned.Base
+import           Data.Foldable
+import           Data.Semigroup
+import           Prompt.Class
+import           Prompt.Iterator
+import           Prompt.Reflection
+import           Test.Hspec        hiding (example)
+import           Unaligned.Base
 
 spec :: Spec
 spec =
@@ -22,5 +22,5 @@ example = do
     go Nil i
   where
     go l = \case
-      Done -> return l
+      Done           -> return l
       Iterator a mi' -> mi' >>= go (l <> stimes a (singleton a))

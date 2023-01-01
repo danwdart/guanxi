@@ -1,9 +1,9 @@
-{-# language RankNTypes #-}
-{-# language PatternSynonyms #-}
-{-# language FlexibleInstances #-}
-{-# language UndecidableInstances #-}
-{-# language MultiParamTypeClasses #-}
-{-# language LambdaCase #-}
+{-# LANGUAGE RankNTypes            #-}
+
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE UndecidableInstances  #-}
 
 -- |
 -- Copyright :  (c) Edward Kmett 2018
@@ -14,15 +14,15 @@
 
 module Logic.Class where
 
-import Control.Applicative
-import Control.Monad
-import Control.Monad.Trans
-import Control.Monad.State.Strict as Strict
-import Control.Monad.State.Lazy as Lazy
-import Control.Monad.Reader
-import Control.Monad.Writer.Strict as Strict
-import Control.Monad.Writer.Lazy as Lazy
-import Unaligned.Base
+import           Control.Applicative
+import           Control.Monad
+import           Control.Monad.Reader
+import           Control.Monad.State.Lazy    as Lazy
+import           Control.Monad.State.Strict  as Strict
+import           Control.Monad.Trans
+import           Control.Monad.Writer.Lazy   as Lazy
+import           Control.Monad.Writer.Strict as Strict
+import           Unaligned.Base
 
 class MonadPlus m => MonadLogic m where
   -- |
@@ -35,14 +35,14 @@ class MonadPlus m => MonadLogic m where
   -- | fair disjunction
   interleave :: m a -> m a -> m a
   interleave m1 m2 = msplit m1 >>= \case
-    Empty -> m2
+    Empty     -> m2
     a :&: m1' -> return a `mplus` interleave m2 m1'
 
   -- | fair conjunction
   (>>-) :: m a -> (a -> m b) -> m b
   m >>- f = do
     (a, m') <- msplit m >>= \case
-      Empty -> mzero
+      Empty    -> mzero
       a :&: m' -> return (a, m')
     interleave (f a) (m' >>- f)
 
@@ -54,7 +54,7 @@ class MonadPlus m => MonadLogic m where
   -- @
   ifte :: m a -> (a -> m b) -> m b -> m b
   ifte t th el = msplit t >>= \case
-    Empty -> el
+    Empty   -> el
     a :&: m -> th a <|> (m >>= th)
 
   -- | pruning
@@ -69,12 +69,12 @@ instance MonadLogic [] where
 
 instance MonadLogic m => MonadLogic (ReaderT e m) where
   msplit rm = ReaderT $ \e -> msplit (runReaderT rm e) >>= \case
-    Empty -> return Empty
+    Empty   -> return Empty
     a :&: m -> return (a :&: lift m)
 
 instance MonadLogic m => MonadLogic (Strict.StateT s m) where
   msplit sm = Strict.StateT $ \s -> msplit (Strict.runStateT sm s) >>= \case
-    Empty -> return (Empty, s)
+    Empty        -> return (Empty, s)
     (a,s') :&: m -> return (a :&: Strict.StateT (\_ -> m), s')
 
   interleave ma mb = Strict.StateT $ \s ->
@@ -92,7 +92,7 @@ instance MonadLogic m => MonadLogic (Strict.StateT s m) where
 
 instance MonadLogic m => MonadLogic (Lazy.StateT s m) where
   msplit sm = Lazy.StateT $ \s -> msplit (Lazy.runStateT sm s) >>= \case
-    Empty -> return (Empty , s)
+    Empty        -> return (Empty , s)
     (a,s') :&: m -> return (a :&: Lazy.StateT (\_ -> m), s')
 
   interleave ma mb = Lazy.StateT $ \s -> Lazy.runStateT ma s `interleave` Lazy.runStateT mb s
@@ -108,7 +108,7 @@ instance MonadLogic m => MonadLogic (Lazy.StateT s m) where
 
 instance (MonadLogic m, Monoid w) => MonadLogic (Strict.WriterT w m) where
   msplit wm = Strict.WriterT $ msplit (Strict.runWriterT wm) >>= \case
-    Empty -> return (Empty, mempty)
+    Empty       -> return (Empty, mempty)
     (a,w) :&: m -> return (a :&: Strict.WriterT m, w)
 
   interleave ma mb = Strict.WriterT $
@@ -126,7 +126,7 @@ instance (MonadLogic m, Monoid w) => MonadLogic (Strict.WriterT w m) where
 
 instance (MonadLogic m, Monoid w) => MonadLogic (Lazy.WriterT w m) where
   msplit wm = Lazy.WriterT $ msplit (Lazy.runWriterT wm) >>= \case
-    Empty -> return (Empty , mempty)
+    Empty       -> return (Empty , mempty)
     (a,w) :&: m -> return (a :&: Lazy.WriterT m, w)
 
   interleave ma mb = Lazy.WriterT $
@@ -147,7 +147,7 @@ instance (MonadLogic m, Monoid w) => MonadLogic (Lazy.WriterT w m) where
 -- msplit >=> reflect ≡ id
 -- @
 reflect :: Alternative m => View a (m a) -> m a
-reflect Empty = empty
+reflect Empty     = empty
 reflect (a :&: m) = pure a <|> m
 
 lnot :: MonadLogic m => m a -> m ()

@@ -1,17 +1,17 @@
-{-# language TypeFamilies #-}
-{-# language FlexibleContexts #-}
-{-# language RankNTypes #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RankNTypes       #-}
+{-# LANGUAGE TypeFamilies     #-}
 
 module Prompt.Class where
 
-import Control.Category
-import Control.Monad
-import Control.Monad.Cont.Class
-import Control.Monad.Reader
-import Data.Kind
-import Data.Type.Coercion
-import Data.Type.Equality
-import Prelude hiding ((.),id)
+import           Control.Category
+import           Control.Monad
+import           Control.Monad.Cont.Class
+import           Control.Monad.Reader
+import           Data.Kind
+import           Data.Type.Coercion
+import           Data.Type.Equality
+import           Prelude                  hiding (id, (.))
 
 -- delimited continuations
 class

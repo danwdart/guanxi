@@ -1,11 +1,11 @@
-{-# language FlexibleInstances #-}
-{-# language GADTs #-}
-{-# language MultiParamTypeClasses #-}
-{-# language RankNTypes #-}
-{-# language ScopedTypeVariables #-}
-{-# language TypeFamilies #-}
-{-# language UndecidableInstances #-}
-{-# language LambdaCase #-}
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE GADTs                 #-}
+{-# LANGUAGE LambdaCase            #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE RankNTypes            #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE UndecidableInstances  #-}
 
 module Prompt.Reflection
   ( CC
@@ -14,21 +14,21 @@ module Prompt.Reflection
   , runPrompt
   ) where
 
-import Aligned.Base
-import Control.Arrow (Kleisli(..))
-import Control.Category
-import Control.Monad as Monad
-import Control.Monad.Cont.Class
-import Control.Monad.Fail as MonadFail
-import Control.Monad.IO.Class
-import Control.Monad.Primitive
-import Control.Monad.State.Class
-import Control.Monad.ST
-import Control.Monad.Trans.Class
-import Data.Type.Equality
-import Key
-import Prelude hiding (id,(.))
-import Prompt.Class
+import           Aligned.Base
+import           Control.Arrow             (Kleisli (..))
+import           Control.Category
+import           Control.Monad             as Monad
+import           Control.Monad.Cont.Class
+import           Control.Monad.Fail        as MonadFail
+import           Control.Monad.IO.Class
+import           Control.Monad.Primitive
+import           Control.Monad.ST
+import           Control.Monad.State.Class
+import           Control.Monad.Trans.Class
+import           Data.Type.Equality
+import           Key
+import           Prelude                   hiding (id, (.))
+import           Prompt.Class
 
 -- Thoughts: if we always used prompts in ascending order, which I intend to, in practice, then we could use a
 -- type aligned fingertree, rather than Rev Cat in DC, giving slower appends, but giving log
@@ -55,7 +55,7 @@ data CC m a where
 instance Category (SC m) where
   id = SC id id
   SC fk fd . SC sk sd = case unsnoc fd of
-    Empty -> SC (fk . sk) sd
+    Empty         -> SC (fk . sk) sd
     t :&: Del p h -> SC fk (snoc t (Del p (h . sk)) . sd)
   {-# inline (.) #-}
 
@@ -140,15 +140,15 @@ runCC e = goCC where
   goCC (CC l d m) = m >>= goSC l d
   goCC (WithSC l d p f) = case split p d of
     Split r fk fd -> goCC $ bind l r (f fk fd)
-    Unsplit -> e
+    Unsplit       -> e
 
   goSC :: Monad m => KC m x a -> DC m w x -> w -> m a
   goSC l d x = case unsnoc d of
     Empty -> case unsnoc l of
-      Empty -> pure x
+      Empty           -> pure x
       t :&: Kleisli f -> goCC $ bindk t (f x)
     t :&: Del p h -> case unsnoc h of
-      Empty -> goSC l t x
+      Empty            -> goSC l t x
       ti :&: Kleisli f -> goCC $ bind l (t `snoc` Del p ti) (f x)
 {-# inlineable runCC #-}
 
@@ -165,7 +165,7 @@ split p = go where
       Just Refl -> Split t sk id
       Nothing -> case go t of
         Split sk' tl dl -> Split sk' tl (dl `snoc` Del p' sk)
-        Unsplit -> Unsplit
+        Unsplit         -> Unsplit
 {-# inline split #-}
 
 runCC_ :: MonadFail m => CC m a -> m a

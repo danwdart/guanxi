@@ -1,10 +1,10 @@
-{-# language OverloadedLists #-}
+{-# LANGUAGE OverloadedLists #-}
 
 module Spec.FD.Monad where
 
-import FD.Monad
-import FD.Var
-import Test.Hspec hiding (example)
+import           FD.Monad
+import           FD.Var
+import           Test.Hspec hiding (example)
 
 spec :: Spec
 spec =

@@ -1,10 +1,8 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
-{-# LANGUAGE KindSignatures           #-}
-
 {-# LANGUAGE FlexibleInstances        #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE FunctionalDependencies   #-}
+{-# LANGUAGE KindSignatures           #-}
 {-# LANGUAGE LambdaCase               #-}
-
 {-# LANGUAGE ScopedTypeVariables      #-}
 {-# LANGUAGE ViewPatterns             #-}
 

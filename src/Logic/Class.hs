@@ -1,8 +1,7 @@
-{-# LANGUAGE RankNTypes            #-}
-
 {-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE LambdaCase            #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE RankNTypes            #-}
 {-# LANGUAGE UndecidableInstances  #-}
 
 -- |

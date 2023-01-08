@@ -1,6 +1,4 @@
 {-# LANGUAGE ConstraintKinds        #-}
-{-# LANGUAGE ViewPatterns           #-}
-
 {-# LANGUAGE FlexibleContexts       #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -9,6 +7,7 @@
 {-# LANGUAGE Trustworthy            #-}
 {-# LANGUAGE TupleSections          #-}
 {-# LANGUAGE TypeFamilies           #-}
+{-# LANGUAGE ViewPatterns           #-}
 
 module Ref
   ( memo

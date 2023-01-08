@@ -1,6 +1,5 @@
-{-# LANGUAGE FlexibleContexts     #-}
-
 {-# LANGUAGE DataKinds            #-}
+{-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE PolyKinds            #-}
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}

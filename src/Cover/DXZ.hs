@@ -1,8 +1,7 @@
-{-# LANGUAGE ForeignFunctionInterface #-}
-{-# LANGUAGE KindSignatures           #-}
-
 {-# LANGUAGE FlexibleInstances        #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE FunctionalDependencies   #-}
+{-# LANGUAGE KindSignatures           #-}
 {-# LANGUAGE MagicHash                #-}
 {-# LANGUAGE MultiWayIf               #-}
 {-# LANGUAGE ScopedTypeVariables      #-}
